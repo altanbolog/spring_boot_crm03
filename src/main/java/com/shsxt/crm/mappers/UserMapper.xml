@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shsxt.crm.dao.UserDao">
+    <select id="selectById" parameterType="int" resultType="user">
+        select <include refid="user_cloumn"/>
+        from t_user
+        where id=#{id} and is_valid=1
+    </select>
+
+
+
+    <sql id="user_cloumn">
+        id,user_name as userName,user_pwd as userPwd,
+        true_name as trueName,email,create_date as createDate,update_date  as updateDate
+    </sql>
+
+    <!--<select id="selectById" parameterType="int" resultType="user">
+      SELECT  <include refid="user_cloumn"/>
+      from t_user where is_valid=1 and id=#{id}
+    </select>-->
+
+    <select id="queryUserByUserName" parameterType="string" resultType="user">
+        select <include refid="user_cloumn"/>
+        from t_user
+        where user_name=#{userName}
+    </select>
+
+    <update id="update" parameterType="user" >
+         update t_user
+         <set>
+             <if test="userName !=null and userName !='' ">
+                 user_name= #{userName},
+             </if>
+             <if test="userPwd !=null and userPwd !='' ">
+                 user_pwd= #{userPwd},
+             </if>
+             <if test="trueName !=null and trueName !='' ">
+                 true_name= #{trueName},
+             </if>
+             <if test="email !=null and email !='' ">
+                 email= #{email},
+             </if>
+             <if test="phone !=null and phone !='' ">
+                 phone= #{phone},
+             </if>
+             <if test="isValid !=null ">
+                 is_valid= #{isValid},
+             </if>
+             <if test="updateDate !=null ">
+                 update_date= #{updateDate},
+             </if>
+         </set>
+        WHERE  id=#{id} and is_valid=1
+    </update>
+
+    <select id="querySaleCustomerManager" resultType="map">
+        SELECT
+            u.id,
+            u.true_name AS trueName
+        FROM
+            t_user u
+        LEFT JOIN t_user_role ur ON u.id = ur.user_id
+        WHERE
+            ur.role_id = 2
+            AND u.is_valid = 1
+    </select>
+</mapper>
